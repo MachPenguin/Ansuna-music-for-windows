@@ -1,0 +1,52 @@
+{
+  "name": "ansuna-music-for-windows",
+  "productName": "Ansuna Music",
+  "version": "1.0.0",
+  "description": "Ansuna Music for Windows - Ad-free YouTube Music client with synced lyrics, playlists, and library",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "electron .",
+    "build": "tsc && electron-builder",
+    "start": "electron .",
+    "package": "electron-builder"
+  },
+  "build": {
+    "appId": "com.ansuna.music.windows",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "release"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "electron": "^29.4.6",
+    "electron-builder": "^24.0.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.4.0"
+  },
+  "allowScripts": true
+}

@@ -1,28 +1,30 @@
 # Ansuna Music for Windows
 
-A native Windows music client inspired by Ansuna Music (Android). Streams from YouTube Music's catalog ad-free, with search, synced lyrics, playlists, and library management.
+A native Windows desktop music client ported from Ansuna Music (Android). Streams from YouTube Music's catalog ad-free, with synced lyrics, search, playlists, library management, and a dark-themed UI matching the original app.
 
-> **Port in progress.** Desktop port of the Android Ansuna Music app, built with Kotlin + JavaFX.
+## Tech Stack
+- **TypeScript** (no Kotlin/Java)
+- **Electron** (native Windows desktop)
+- **HTML5 Audio** for playback
+- **InnerTube API** for YouTube Music data
 
-## Tech stack
-
-- **Language:** Kotlin (JVM 21)
-- **UI:** JavaFX (CSS-styled dark theme)
-- **Networking:** Ktor client
-- **JSON:** kotlinx.serialization
-- **Build:** Gradle 9.3.1
-
-## Build & run
+## Build & Run
 
 ```bash
-git clone https://github.com/MachPenguin/Ansuna-music-for-windows.git
-cd Ansuna-music-for-windows
+# Install dependencies
+npm install
 
-./gradlew :desktop-app:run        # run the app
-./gradlew :desktop-app:jar        # build jar
-./gradlew :desktop-app:distZip    # build a distributable zip
+# Run in development
+npm run dev
+
+# Build Windows .exe installer
+npm run build
 ```
 
-## License
-
-GPL-3.0 — educational / personal use only. See the original Ansuna Music project.
+## Features
+- Ad-free streaming from YouTube Music
+- Search & browse
+- Synced lyrics
+- Playlists & library
+- Dark theme matching Ansuna's design
+- Mini player

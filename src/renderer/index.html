@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ansuna Music</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Custom title bar -->
+  <div id="title-bar">
+    <div id="title-bar-left">
+      <div id="app-icon">🎵</div>
+      <div id="app-title">Ansuna Music</div>
+    </div>
+    <div id="title-bar-right">
+      <button id="btn-minimize">−</button>
+      <button id="btn-maximize">□</button>
+      <button id="btn-close">×</button>
+    </div>
+  </div>
+
+  <div id="app-container">
+    <!-- Sidebar navigation -->
+    <nav id="sidebar">
+      <div class="nav-header">
+        <div class="nav-logo">Ansuna</div>
+      </div>
+      <div class="nav-items">
+        <button class="nav-item active" data-screen="home">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item" data-screen="search">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Search</span>
+        </button>
+        <button class="nav-item" data-screen="library">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Library</span>
+        </button>
+        <button class="nav-item" data-screen="generate">
+          <span class="nav-icon">✨</span>
+          <span class="nav-label">Generate</span>
+        </button>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-items">
+        <button class="nav-item" data-screen="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main id="main-content">
+      <div id="screen-container">
+        <!-- Screens will be injected here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Mini player (docked at bottom) -->
+  <div id="mini-player">
+    <div id="mini-player-inner">
+      <div id="mini-artwork"></div>
+      <div id="mini-info">
+        <div id="mini-title">No track playing</div>
+        <div id="mini-artist"></div>
+      </div>
+      <div id="mini-controls">
+        <button id="mini-play-pause" class="icon-btn">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
