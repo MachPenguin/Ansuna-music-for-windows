@@ -2,58 +2,61 @@ package com.ansuna.music.window
 
 import com.ansuna.music.window.model.Song
 import com.ansuna.music.window.player.PlayerViewModel
+import com.ansuna.music.window.ui.component.MiniPlayer
+import com.ansuna.music.window.ui.component.NavItem
 import com.ansuna.music.window.ui.screen.HomeScreen
+import com.ansuna.music.window.ui.screen.LibraryScreen
 import com.ansuna.music.window.ui.screen.SearchScreen
 import com.ansuna.music.window.ui.screen.Screen
+import com.ansuna.music.window.ui.theme.AnsunaTheme
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Font
+import java.awt.GridLayout
 import javax.swing.BorderFactory
-import javax.swing.BoxLayout
-import javax.swing.JButton
+import javax.swing.Box
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Font
 
 /**
- * Main application window for Ansuna Music.
+ * Main application window for Ansuna Music on Windows.
  *
- * Shell with a sidebar navigation, the active screen content, and a docked
- * mini-player at the bottom showing the currently playing track.
+ * Shell with a left navigation rail, the active screen content area, and a
+ * docked mini-player at the bottom — replicating the Android app's navigation
+ * structure (Home, Search, Library, Generate).
  */
 class MainWindow : JFrame() {
   private val player = PlayerViewModel()
   private val content = JPanel()
   private var currentScreen: Screen? = null
-
-  // Now-playing mini player
-  private val nowPlayingLabel = JLabel("No track playing")
-  private val playPauseBtn = JButton("▶")
+  private val navButtons = mutableListOf<NavItem>()
 
   init {
     title = "Ansuna Music"
     defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     setSize(1100, 760)
     setLocationRelativeTo(null)
+    setResizable(true)
 
-    val root = JPanel(BorderLayout())
-    root.background = Color(0x0A0A0A)
+    val root = JPanel(java.awt.BorderLayout())
+    root.background = AnsunaTheme.background
 
-    // Sidebar navigation
+    // Left navigation rail
     val nav = buildNav()
-    nav.preferredSize = Dimension(220, Int.MAX_VALUE)
-    root.add(nav, BorderLayout.WEST)
+    nav.preferredSize = Dimension(72, Int.MAX_VALUE)
+    nav.maximumSize = Dimension(72, Int.MAX_VALUE)
+    root.add(nav, java.awt.BorderLayout.WEST)
 
     // Content area
-    content.layout = BorderLayout()
-    content.background = Color(0x121212)
+    content.layout = java.awt.BorderLayout()
+    content.background = AnsunaTheme.background
     content.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-    root.add(content, BorderLayout.CENTER)
+    root.add(content, java.awt.BorderLayout.CENTER)
 
-    // Mini player dock
-    root.add(buildMiniPlayer(), BorderLayout.SOUTH)
+    // Docked mini-player
+    root.add(MiniPlayer(player), java.awt.BorderLayout.SOUTH)
 
     add(root)
 
@@ -61,122 +64,52 @@ class MainWindow : JFrame() {
     showScreen(HomeScreen(player, ::selectSong))
   }
 
-  /** Builds the left sidebar navigation. */
+  /** Builds the left navigation rail. */
   private fun buildNav(): JPanel {
     val nav = JPanel()
-    nav.layout = BoxLayout(nav, BoxLayout.Y_AXIS)
-    nav.background = Color(0x121212)
-    nav.border = BorderFactory.createEmptyBorder(16, 12, 16, 12)
+    nav.layout = GridLayout(0, 1) // one column, variable rows
+    (nav.layout as GridLayout).vgap = 8
+    nav.background = AnsunaTheme.surface
+    nav.border = BorderFactory.createMatteBorder(0, 0, 0, 1, AnsunaTheme.divider)
 
     val header = JLabel("Ansuna")
-    header.font = Font("Segoe UI", Font.BOLD, 20)
-    header.foreground = Color.WHITE
-    header.alignmentX = 0f
+    header.font = AnsunaTheme.headingFont(18)
+    header.foreground = AnsunaTheme.textOnSurface
+    header.horizontalAlignment = javax.swing.SwingConstants.CENTER
+    header.border = BorderFactory.createEmptyBorder(20, 8, 20, 8)
     nav.add(header)
-    nav.add(javax.swing.Box.createRigidArea(Dimension(0, 24)))
+    nav.add(Box.createRigidArea(Dimension(0, 16)))
 
     val items = listOf(
-      NavItem("Home", HomeScreen(player, this::selectSong)),
-      NavItem("Search", SearchScreen(player, this::selectSong)),
-      NavItem("Library", null), // TODO: library screen
-      NavItem("Settings", null), // TODO: settings screen
+      NavItem("🏠", "Home", true, { showScreen(HomeScreen(player, ::selectSong)) }),
+      NavItem("🔍", "Search", false, { showScreen(SearchScreen(player, ::selectSong)) }),
+      NavItem("📚", "Library", false, { showScreen(LibraryScreen()) }),
+      NavItem("✨", "Generate", false, { showScreen(LibraryScreen()) }) // placeholder
     )
 
     for (item in items) {
-      val btn = JButton(item.title)
-      btn.font = Font("Segoe UI", Font.PLAIN, 14)
-      btn.background = Color(0x121212)
-      btn.foreground = Color(0xA0A0A0)
-      btn.setFocusPainted(false)
-      btn.border = BorderFactory.createEmptyBorder(8, 4, 8, 4)
-      btn.maximumSize = Dimension(Int.MAX_VALUE, 36)
-      btn.alignmentX = 0f
-      btn.setContentAreaFilled(false)
-      btn.setBorderPainted(false)
-      btn.addActionListener {
-        // highlight
-        for (b in nav.components) {
-          if (b is JButton) b.background = Color(0x121212)
-        }
-        btn.background = Color(0x1A1A1A)
-        item.screen?.let { showScreen(it) }
-      }
-      item.button = btn
-      nav.add(btn)
-      nav.add(javax.swing.Box.createRigidArea(Dimension(0, 6)))
+      nav.add(item)
+      navButtons.add(item)
     }
 
-    nav.add(javax.swing.Box.createVerticalGlue())
+    nav.add(Box.createVerticalGlue())
     return nav
-  }
-
-  /** Builds the bottom mini-player dock. */
-  private fun buildMiniPlayer(): JPanel {
-    val bar = JPanel(BorderLayout())
-    bar.background = Color(0x1A1A1A)
-    bar.border = BorderFactory.createMatteBorder(1, 0, 0, 0, Color(0x2A2A2A))
-    bar.preferredSize = Dimension(Int.MAX_VALUE, 64)
-    bar.maximumSize = Dimension(Int.MAX_VALUE, 64)
-
-    nowPlayingLabel.font = Font("Segoe UI", Font.BOLD, 13)
-    nowPlayingLabel.foreground = Color.WHITE
-    nowPlayingLabel.border = BorderFactory.createEmptyBorder(0, 14, 0, 0)
-
-    playPauseBtn.font = Font("Segoe UI", Font.PLAIN, 13)
-    playPauseBtn.background = Color(0xED5564)
-    playPauseBtn.foreground = Color.WHITE
-    playPauseBtn.setFocusPainted(false)
-    playPauseBtn.border = BorderFactory.createEmptyBorder(4, 14, 4, 14)
-    playPauseBtn.addActionListener { player.toggle() }
-
-    bar.add(nowPlayingLabel, BorderLayout.WEST)
-    bar.add(playPauseBtn, BorderLayout.EAST)
-
-    // React to playback state changes
-    player.player // keep reference; poll below
-    SwingUtilities.invokeLater(object : Runnable {
-      override fun run() {
-        updateMiniPlayer()
-        // refresh every 500 ms while something is loaded
-        javax.swing.Timer(500, { _ ->
-          updateMiniPlayer()
-        }).start()
-      }
-    })
-
-    return bar
-  }
-
-  private fun updateMiniPlayer() {
-    val song = player.nowPlaying
-    val text = if (song != null) "${song.title} — ${song.artist}" else "No track playing"
-    nowPlayingLabel.text = text
-    playPauseBtn.text = if (player.isPlaying) "⏸" else "▶"
-    playPauseBtn.isEnabled = song != null
   }
 
   /** Switches the content area to [screen]. */
   fun showScreen(screen: Screen) {
     currentScreen?.onHide()
     content.removeAll()
-    content.add(screen.component, BorderLayout.CENTER)
+    content.add(screen.component, java.awt.BorderLayout.CENTER)
     currentScreen = screen
     content.revalidate()
     content.repaint()
     screen.onShow()
   }
 
-  /** Selects a song from a screen: opens it and shows now-playing. */
+  /** Selects a song from a screen: plays it and shows now-playing. */
   fun selectSong(song: Song) {
     player.play(song)
-    updateMiniPlayer()
-  }
-
-  /** Nav item pairing a label with its screen. */
-  private class NavItem(
-    val title: String,
-    val screen: Screen?,
-  ) {
-    var button: JButton? = null
   }
 }
+
