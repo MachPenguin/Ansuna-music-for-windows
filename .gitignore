@@ -1,0 +1,14 @@
+*.class
+*.log
+*.iml
+*.ipr
+*.iws
+*.keystore
+*.jks
+.DS_Store
+local.properties
+.idea/
+.gradle/
+build/
+out/
+*.kt.bak
