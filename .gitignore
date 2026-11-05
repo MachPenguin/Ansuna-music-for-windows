@@ -5,6 +5,7 @@
 *.iws
 *.keystore
 *.jks
+*.exe
 .DS_Store
 local.properties
 .idea/
